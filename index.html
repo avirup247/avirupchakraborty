@@ -2,91 +2,258 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=1024, initial-scale=0.3, maximum-scale=1.0, user-scalable=no">
-    <title>Avirup Chakraborty - Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner and Data Sender</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom styles for the scanner area */
+        #reader {
+            width: 100%;
+            max-width: 400px; /* Constrain size for better focus */
+            margin: 0 auto;
+            border: 2px solid #3b82f6;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: #1f2937; /* Dark background for the camera feed */
+        }
+        /* Style for the HTML5-QR Code message/info text */
+        .html5-qrcode-code-found {
+            color: #3b82f6 !important;
+        }
+    </style>
+    <!-- Load HTML5-QR Code Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
-<body>
-    <header>
-        <div class="container">
-            <h1>Avirup Chakraborty</h1>
-            <p>B.E - Mechanical Engineering, 3rd Year</p>
-            <p>Jadavpur University</p>
-            <div class="contact-info">
-                <a href="tel:+918509068803">+91 8509068803</a>
-                <a href="mailto:avirupchakraborty247@gmail.com">avirupchakraborty247@gmail.com</a>
-                <a href="https://github.com/avirup247" target="_blank">GitHub</a>
-                <a href="https://www.linkedin.com/in/avirup-chakraborty-07022023a/" target="_blank">LinkedIn</a>
-            </div>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-white p-6 md:p-8 rounded-2xl shadow-xl space-y-6">
+        <h1 class="text-3xl font-extrabold text-center text-gray-800">QR Code Scanner</h1>
+        <p class="text-center text-gray-500">Press the button below to start scanning and uploading data.</p>
+
+        <!-- Status Message Box -->
+        <div id="statusMessage" class="p-3 bg-blue-100 text-blue-700 rounded-lg font-medium text-sm transition-all duration-300">
+            Ready to scan. Press Start Scanning.
         </div>
-    </header>
 
-    <section id="about">
-        <div class="container">
-            <div class="profile-pic">
-                <img src="avirip.jpg" alt="Avirup Chakraborty">
-            </div>
-            <div class="about-info">
-                <h2>About Me</h2>
-                <p>Hi! I am Avirup Chakraborty, a passionate Mechanical Engineering student from Jadavpur University with interests in Robotics, Game Development, and Web Technologies.</p>
-                <a href="AVIRUP_CHAKRABORTY.pdf" download class="download-btn">Download Resume</a>
-            </div>
+        <!-- QR Code Reader Container -->
+        <div id="reader" class="aspect-square"></div>
 
-            
+        <!-- Action Button -->
+        <button id="scanButton" onclick="toggleScan()" class="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-md shadow-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50">
+            Start Scanning
+        </button>
+
+        <!-- Result Display Area -->
+        <div class="mt-6 pt-4 border-t border-gray-200 space-y-2">
+            <h2 class="text-xl font-semibold text-gray-700">Scan Details</h2>
+            <p class="text-gray-600 break-words"><span class="font-bold">QR Data:</span> <span id="scannedData">---</span></p>
+            <p class="text-gray-600 break-words"><span class="font-bold">Server Response:</span> <span id="serverResponse">---</span></p>
         </div>
-    </section>
-
-    <div class="parallax" id="university-section">
-        
     </div>
 
-    <section id="skills">
-        <div class="container">
-            <h2>Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-item">
-                    <h3>Design Software</h3>
-                    <p>SOLIDWORKS, AutoCAD, ANSYS Workbench</p>
-                </div>
-                <div class="skill-item">
-                    <h3>Programming Languages</h3>
-                    <p>C++, Python, JavaScript, C#, Java, MATLAB</p>
-                </div>
-                <div class="skill-item">
-                    <h3>Web Development</h3>
-                    <p>HTML, CSS, Bootstrap, PHP, MySQL, React</p>
-                </div>
-                <div class="skill-item">
-                    <h3>IoT and AI</h3>
-                    <p>AI-ML, Node.js, Arduino, ESP32, AWS</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <script>
+        // --- Firebase Globals (Required but not strictly used for this simple fetch app, kept for compliance) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        // const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
+        // ----------------------------------------------------------------------------------------------------
 
-    <div class="parallax" id="projects-section">
-        <h2>Projects</h2>
-    </div>
+        const QR_READER_ID = 'reader';
+        const TARGET_URL_BASE = "http://10.27.125.98/scan?data=";
 
-    <section id="projects">
-        <div class="container">
-            <div class="project">
-                <h3>GLASSIAN</h3>
-                <p>A AAA open-world RPG sci-fi game available for Android and Windows OS.</p>
-            </div>
-            <div class="project">
-                <h3>SMART HOME ROBOT</h3>
-                <p>A speech-recognizing, face-recognizing robot integrated with the latest tech.</p>
-            </div>
-        </div>
-    </section>
+        // Global variables for scanner state
+        let html5QrCode = null;
+        let isScanning = false;
+        const button = document.getElementById('scanButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const scannedDataElement = document.getElementById('scannedData');
+        const serverResponseElement = document.getElementById('serverResponse');
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Avirup Chakraborty. All rights reserved.</p>
-        </div>
-    </footer>
+        /**
+         * Utility function to display messages in the UI.
+         * @param {string} message The message to display.
+         * @param {string} type The message type (e.g., 'info', 'success', 'error').
+         */
+        function displayStatus(message, type = 'info') {
+            let bgColor, textColor;
 
-    <script src="script.js"></script>
+            switch (type) {
+                case 'success':
+                    bgColor = 'bg-green-100';
+                    textColor = 'text-green-700';
+                    break;
+                case 'error':
+                    bgColor = 'bg-red-100';
+                    textColor = 'text-red-700';
+                    break;
+                case 'info':
+                default:
+                    bgColor = 'bg-blue-100';
+                    textColor = 'text-blue-700';
+            }
+            statusMessage.className = `p-3 ${bgColor} ${textColor} rounded-lg font-medium text-sm transition-all duration-300`;
+            statusMessage.innerHTML = message;
+        }
+
+        /**
+         * Clears the result area.
+         */
+        function clearResults() {
+            scannedDataElement.textContent = '---';
+            serverResponseElement.textContent = '---';
+        }
+
+        /**
+         * Handles the successful decoding of a QR code.
+         * @param {string} decodedText The data from the QR code.
+         * @param {object} decodedResult The full result object.
+         */
+        async function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Code matched = ${decodedText}`, decodedResult);
+
+            // 1. Stop the scanner immediately upon success
+            await stopScan();
+
+            // 2. Update UI with scanned data
+            scannedDataElement.textContent = decodedText;
+            displayStatus(`QR Code Scanned! Data: "${decodedText}". Sending to server...`, 'info');
+
+            // 3. Prepare the fetch URL
+            const fetchUrl = TARGET_URL_BASE + encodeURIComponent(decodedText);
+            console.log("Fetching URL:", fetchUrl);
+            serverResponseElement.textContent = 'Awaiting server response...';
+            serverResponseElement.classList.remove('text-red-700');
+            serverResponseElement.classList.add('text-yellow-600');
+
+
+            // 4. Perform the fetch request with exponential backoff
+            const maxRetries = 3;
+            let responseText = 'No response received.';
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(fetchUrl);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    responseText = await response.text();
+                    console.log("ESP Response:", responseText);
+
+                    // Success handling
+                    serverResponseElement.textContent = responseText.trim() || '[Empty Response]';
+                    serverResponseElement.classList.remove('text-yellow-600');
+                    serverResponseElement.classList.add('text-green-600');
+                    displayStatus('Successfully sent data and received server response.', 'success');
+                    return; // Exit function on success
+
+                } catch (err) {
+                    console.error("Fetch attempt failed:", err);
+                    responseText = `Error: ${err.message}. Retrying... (${i + 1}/${maxRetries})`;
+
+                    // If it's the last attempt, report final error
+                    if (i === maxRetries - 1) {
+                        serverResponseElement.textContent = `FINAL ERROR: ${err.message}`;
+                        serverResponseElement.classList.remove('text-yellow-600');
+                        serverResponseElement.classList.add('text-red-700');
+                        displayStatus('Failed to send data or receive response after multiple retries.', 'error');
+                        return;
+                    }
+
+                    // Exponential backoff delay
+                    const delay = Math.pow(2, i) * 1000;
+                    console.log(`Waiting ${delay}ms before next retry...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        /**
+         * Starts the QR code scanner.
+         */
+        function startScan() {
+            if (isScanning) return;
+            clearResults();
+            displayStatus('Starting camera...', 'info');
+
+            // Initialize scanner if it doesn't exist
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode(QR_READER_ID);
+            }
+
+            // Start the scanning process
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            const constraints = {
+                // Prefer the rear camera on mobile devices
+                facingMode: "environment"
+            };
+
+            html5QrCode.start(
+                constraints,
+                config,
+                onScanSuccess,
+                (errorMessage) => {
+                    // console.log("QR Code scanning still in progress.", errorMessage);
+                }
+            )
+            .then(() => {
+                isScanning = true;
+                button.textContent = 'Stop Scanning';
+                button.classList.replace('bg-blue-600', 'bg-red-600');
+                button.classList.replace('shadow-blue-300', 'shadow-red-300');
+                displayStatus('Scanning active. Point your camera at a QR code.', 'info');
+            })
+            .catch((err) => {
+                console.error("Camera access failed:", err);
+                displayStatus(`ERROR: Could not start scanner. Ensure camera permissions are granted. (${err.name})`, 'error');
+            });
+        }
+
+        /**
+         * Stops the QR code scanner.
+         */
+        async function stopScan() {
+            if (!isScanning || !html5QrCode) return;
+
+            try {
+                await html5QrCode.stop();
+                isScanning = false;
+                button.textContent = 'Start Scanning';
+                button.classList.replace('bg-red-600', 'bg-blue-600');
+                button.classList.replace('shadow-red-300', 'shadow-blue-300');
+                displayStatus('Scan stopped. Ready to scan again.', 'info');
+                // Clear the preview area
+                document.getElementById(QR_READER_ID).innerHTML = "";
+            } catch (err) {
+                console.error("Error stopping scanner:", err);
+                displayStatus('ERROR: Could not stop scanner gracefully.', 'error');
+            }
+        }
+
+        /**
+         * Toggles the scanning state.
+         */
+        function toggleScan() {
+            if (isScanning) {
+                stopScan();
+            } else {
+                startScan();
+            }
+        }
+
+        // On load, ensure UI reflects the initial state
+        window.onload = function() {
+            console.log("App initialized.");
+            displayStatus('Ready to scan. Press Start Scanning.');
+        }
+
+    </script>
 </body>
 </html>
