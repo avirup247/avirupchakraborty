@@ -6,13 +6,11 @@
     <title>Parthib's Art - Portfolio</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Inter font family -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Load Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Use Times New Roman font (using a system font stack for reliability) -->
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            /* Changed from Inter to Times New Roman/Serif equivalent */
+            font-family: 'Times New Roman', Times, serif; 
             color: #333; /* Dark gray text */
             background-color: #f7f7f7; /* Light off-white background */
         }
@@ -41,6 +39,13 @@
         .content-section {
             scroll-margin-top: 5rem; /* Offset for fixed header */
         }
+        /* CSS for the blur effect on image hover */
+        .blur-target {
+            transition: filter 0.3s ease-in-out;
+        }
+        .blur-target.blurred {
+            filter: blur(5px);
+        }
     </style>
     <script>
         tailwind.config = {
@@ -55,9 +60,10 @@
             }
         }
 
-        // Function to initialize Lucide icons
+        // Function to initialize Lucide icons and interactivity
         window.onload = function() {
             lucide.createIcons();
+            
             // Attach smooth scrolling logic
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
@@ -67,6 +73,17 @@
                     });
                 });
             });
+
+            // Interactivity for blur effect on the artist portrait
+            const artistImage = document.getElementById('artist-portrait');
+            if (artistImage) {
+                artistImage.addEventListener('mouseenter', () => {
+                    artistImage.classList.add('blurred');
+                });
+                artistImage.addEventListener('mouseleave', () => {
+                    artistImage.classList.remove('blurred');
+                });
+            }
         };
     </script>
 </head>
@@ -127,7 +144,8 @@
                     <!-- Image Column -->
                     <div class="lg:w-1/2 mb-10 lg:mb-0">
                         <!-- Placeholder image for the large black and white portrait -->
-                        <img src="https://placehold.co/800x1000/1A1A1A/FFFFFF?text=Artist+Portrait" alt="Large black and white portrait of the artist" class="w-full h-auto object-cover rounded-xl shadow-2xl">
+                        <!-- Added 'blur-target' class and 'id' for JavaScript interaction -->
+                        <img id="artist-portrait" src="https://placehold.co/800x1000/1A1A1A/FFFFFF?text=Artist+Portrait" alt="Large black and white portrait of the artist" class="w-full h-auto object-cover rounded-xl shadow-2xl blur-target">
                     </div>
 
                     <!-- Text and Stats Column -->
