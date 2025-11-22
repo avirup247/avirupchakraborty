@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parthib's Art - Portfolio</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333; /* Dark gray text */
+            background-color: #f7f7f7; /* Light off-white background */
+        }
+        .header-link:hover {
+            color: #4A4A4A; /* Slightly darker on hover */
+        }
+        .text-section-title {
+            font-size: 2.5rem; /* Large size for titles like 'Gallery' or 'About the Artist' */
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: #1A1A1A;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #666;
+        }
+        /* Styling for the focus-based scrolling navigation */
+        .content-section {
+            scroll-margin-top: 5rem; /* Offset for fixed header */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1A1A1A',
+                        'secondary': '#555555',
+                        'accent': '#000000',
+                    }
+                }
+            }
+        }
+
+        // Function to initialize Lucide icons
+        window.onload = function() {
+            lucide.createIcons();
+            // Attach smooth scrolling logic
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        };
+    </script>
+</head>
+<body>
+
+    <!-- Fixed Header/Navigation -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between max-w-7xl">
+            <!-- Logo/Brand -->
+            <div class="flex items-center space-x-2">
+                <span class="font-serif text-xl font-bold text-primary tracking-tight">Parthib's Art</span>
+            </div>
+
+            <!-- Desktop Navigation Links -->
+            <div class="hidden sm:flex items-center space-x-8 text-sm font-medium text-secondary">
+                <a href="#home" class="header-link hover:text-accent transition duration-150">Home</a>
+                <a href="#about" class="header-link hover:text-accent transition duration-150">About</a>
+                <a href="#gallery" class="header-link hover:text-accent transition duration-150">Gallery</a>
+                <a href="#commission" class="header-link hover:text-accent transition duration-150">Commission</a>
+                <!-- Log in/User Icon -->
+                <button class="text-secondary hover:text-accent transition duration-150 p-1 rounded-full">
+                    <i data-lucide="log-in" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button (Hamburger) - Not implemented here for brevity/focus on content sections, but standard practice -->
+        </nav>
+    </header>
+
+    <main class="pt-20">
+
+        <!-- 1. Home Section -->
+        <section id="home" class="content-section container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl mb-24">
+            <div class="flex flex-col items-center justify-center min-h-[50vh] text-center">
+                <div class="max-w-xl">
+                    <h1 class="text-5xl sm:text-6xl font-extrabold text-primary leading-tight mb-4">
+                        Sketches That Tell Stories
+                    </h1>
+                    <p class="text-lg text-secondary mb-8">
+                        Hand-drawn art capturing moments, emotions, and imagination through pencil and paper.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
+                        <a href="#gallery" class="bg-accent text-white py-3 px-8 rounded-lg font-medium shadow-lg hover:bg-gray-800 transition duration-300">
+                            View Gallery
+                        </a>
+                        <a href="#commission" class="bg-white text-accent py-3 px-8 rounded-lg font-medium shadow-md border border-gray-200 hover:bg-gray-100 transition duration-300">
+                            Commission Work
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. About Section -->
+        <section id="about" class="content-section bg-white py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+                <div class="flex flex-col lg:flex-row lg:space-x-12">
+                    <!-- Image Column -->
+                    <div class="lg:w-1/2 mb-10 lg:mb-0">
+                        <!-- Placeholder image for the large black and white portrait -->
+                        <img src="https://placehold.co/800x1000/1A1A1A/FFFFFF?text=Artist+Portrait" alt="Large black and white portrait of the artist" class="w-full h-auto object-cover rounded-xl shadow-2xl">
+                    </div>
+
+                    <!-- Text and Stats Column -->
+                    <div class="lg:w-1/2">
+                        <h2 class="text-section-title mb-8">About the Artist</h2>
+
+                        <p class="text-lg mb-6 text-gray-700">
+                            I'm a sketch artist passionate about capturing the world through pencil and paper. Each line tells a story, each shadow adds depth, and every sketch is a moment frozen in time.
+                        </p>
+
+                        <p class="text-base mb-10 text-gray-600">
+                            With over 8 years of experience in graphite art, I specialize in portraits, architectural drawings, and nature studies. My work explores the delicate balance between precision and spontaneity, creating pieces that are both technically refined and emotionally resonant.
+                        </p>
+                        
+                        <p class="text-base mb-10 text-gray-600">
+                            I believe in the power of traditional art forms in our digital age. There's something irreplaceable about the texture of pencil on paper, the subtle gradations of graphite, and the intimate connection between artist and medium.
+                        </p>
+
+                        <!-- Stats Block -->
+                        <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+                            <div class="text-center">
+                                <p class="stat-number text-primary">8+</p>
+                                <p class="stat-label">Years Experience</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="stat-number text-primary">200+</p>
+                                <p class="stat-label">Projects Completed</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="stat-number text-primary">150+</p>
+                                <p class="stat-label">Happy Clients</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Gallery Section -->
+        <section id="gallery" class="content-section container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-16 sm:py-24">
+            <div class="text-center mb-12">
+                <h2 class="text-section-title">Gallery</h2>
+                <p class="text-lg text-secondary mt-2">
+                    A collection of my recent work spanning various subjects and styles.
+                </p>
+            </div>
+            
+            <!-- Grid of Placeholder Artworks -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Gallery Item 1 -->
+                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition duration-300">
+                    <img src="https://placehold.co/600x600/CCCCCC/333333?text=Portrait+Sketch" alt="Example Art 1: Portrait Sketch" class="w-full h-auto object-cover aspect-square">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-primary">The Elder</h3>
+                        <p class="text-sm text-secondary">Graphite Portrait, 2023</p>
+                    </div>
+                </div>
+                <!-- Gallery Item 2 -->
+                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition duration-300">
+                    <img src="https://placehold.co/600x600/AAAAAA/FFFFFF?text=Architectural+Drawing" alt="Example Art 2: Architectural Drawing" class="w-full h-auto object-cover aspect-square">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-primary">Cityscape</h3>
+                        <p class="text-sm text-secondary">Pencil on Paper, 2024</p>
+                    </div>
+                </div>
+                <!-- Gallery Item 3 -->
+                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition duration-300">
+                    <img src="https://placehold.co/600x600/BBBBBB/333333?text=Nature+Study" alt="Example Art 3: Nature Study" class="w-full h-auto object-cover aspect-square">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-primary">The Iris</h3>
+                        <p class="text-sm text-secondary">Botanical Sketch, 2023</p>
+                    </div>
+                </div>
+                <!-- Gallery Item 4 -->
+                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition duration-300">
+                    <img src="https://placehold.co/600x600/DDDDDD/333333?text=Conceptual+Art" alt="Example Art 4: Conceptual Art" class="w-full h-auto object-cover aspect-square">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-primary">Mind's Eye</h3>
+                        <p class="text-sm text-secondary">Mixed Media, 2024</p>
+                    </div>
+                </div>
+                <!-- Gallery Item 5 -->
+                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition duration-300">
+                    <img src="https://placehold.co/600x600/EEEEEE/333333?text=Animal+Sketch" alt="Example Art 5: Animal Sketch" class="w-full h-auto object-cover aspect-square">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-primary">The Watcher</h3>
+                        <p class="text-sm text-secondary">Charcoal Sketch, 2023</p>
+                    </div>
+                </div>
+                <!-- Gallery Item 6 -->
+                <div class="bg-gray-100 rounded-lg overflow-hidden shadow-lg transform hover:scale-[1.02] transition duration-300">
+                    <img src="https://placehold.co/600x600/F5F5F5/333333?text=Still+Life" alt="Example Art 6: Still Life" class="w-full h-auto object-cover aspect-square">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-primary">Copper Kettle</h3>
+                        <p class="text-sm text-secondary">Graphite, 2024</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <button class="bg-white text-accent py-3 px-8 rounded-lg font-medium shadow-md border border-gray-200 hover:bg-gray-100 transition duration-300">
+                    View More Work
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. Commission Section -->
+        <section id="commission" class="content-section bg-gray-50 py-16 sm:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+                <div class="flex flex-col lg:flex-row lg:space-x-12">
+                    
+                    <!-- Left Column: Introduction and Contact Info -->
+                    <div class="lg:w-1/2 mb-10 lg:mb-0">
+                        <h2 class="text-section-title mb-4">Commission a Piece</h2>
+                        <p class="text-lg text-gray-700 mb-8">
+                            Interested in a custom sketch? I'd love to bring your vision to life. Whether it's a portrait, architectural drawing, or a unique concept, let's create something special together.
+                        </p>
+
+                        <!-- What I Offer -->
+                        <h3 class="font-bold text-xl text-primary mb-4 mt-8">What I Offer</h3>
+                        <ul class="space-y-3 text-base text-gray-600 list-none pl-0">
+                            <li class="flex items-start">
+                                <span class="text-accent mr-3">
+                                    <i data-lucide="chevrons-right" class="w-5 h-5 mt-1"></i>
+                                </span>
+                                Custom portraits from photos
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-accent mr-3">
+                                    <i data-lucide="chevrons-right" class="w-5 h-5 mt-1"></i>
+                                </span>
+                                Architectural sketches
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-accent mr-3">
+                                    <i data-lucide="chevrons-right" class="w-5 h-5 mt-1"></i>
+                                </span>
+                                Nature and botanical studies
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-accent mr-3">
+                                    <i data-lucide="chevrons-right" class="w-5 h-5 mt-1"></i>
+                                </span>
+                                Abstract and conceptual pieces
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-accent mr-3">
+                                    <i data-lucide="chevrons-right" class="w-5 h-5 mt-1"></i>
+                                </span>
+                                Custom requests welcome
+                            </li>
+                        </ul>
+
+                        <!-- Social/Contact -->
+                        <h3 class="font-bold text-xl text-primary mb-4 mt-10">Connect</h3>
+                        <ul class="space-y-3 text-base text-gray-600">
+                            <li class="flex items-center">
+                                <i data-lucide="mail" class="w-5 h-5 text-accent mr-3"></i>
+                                parthibsart@gmail.com
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="instagram" class="w-5 h-5 text-accent mr-3"></i>
+                                @parthibs_art
+                            </li>
+                            <li class="flex items-center">
+                                <i data-lucide="facebook" class="w-5 h-5 text-accent mr-3"></i>
+                                facebook.com/parthibsart
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Right Column: Commission Form -->
+                    <div class="lg:w-1/2 p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="font-bold text-2xl text-primary mb-6">Project Details</h3>
+                        <form id="commission-form" onsubmit="handleFormSubmit(event)">
+                            
+                            <div class="mb-5">
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input type="text" id="name" name="name" placeholder="Your name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent" required>
+                            </div>
+                            
+                            <div class="mb-5">
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input type="email" id="email" name="email" placeholder="you@email.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent" required>
+                            </div>
+
+                            <div class="mb-5">
+                                <label for="project-type" class="block text-sm font-medium text-gray-700 mb-1">Project Type</label>
+                                <select id="project-type" name="project-type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent appearance-none bg-white" required>
+                                    <option value="">Select Type</option>
+                                    <option value="portrait">Portrait</option>
+                                    <option value="architecture">Architecture</option>
+                                    <option value="nature">Nature / Botanical</option>
+                                    <option value="conceptual">Abstract / Conceptual</option>
+                                    <option value="other">Other Custom Request</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-5">
+                                <label for="details" class="block text-sm font-medium text-gray-700 mb-1">Project Details</label>
+                                <textarea id="details" name="details" rows="5" placeholder="Tell me about your project, dimensions, reference photos, and timeline." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-accent text-white py-3 rounded-lg font-semibold shadow-md hover:bg-gray-800 transition duration-300 flex items-center justify-center space-x-2">
+                                <span>Send Request</span>
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+
+                            <!-- Custom Message Box for alerts -->
+                            <div id="message-box" class="mt-4 p-3 hidden rounded-lg text-sm transition-all duration-300" role="alert"></div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl text-center">
+            <p class="text-sm">&copy; 2025 Parthib's Art. All rights reserved.</p>
+            <p class="text-xs mt-2 text-gray-400">Handcrafted with passion and graphite.</p>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * Custom Modal/Message Box Implementation (replacing alert())
+         */
+        function showMessage(message, type = 'success') {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.className = 'mt-4 p-3 rounded-lg text-sm transition-all duration-300';
+            
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            }
+            
+            messageBox.classList.remove('hidden');
+
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
+        }
+
+        /**
+         * Handle form submission (client-side only, as no backend is available)
+         */
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Stop default form submission
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
+            
+            formData.forEach((value, key) => data[key] = value);
+
+            console.log('Commission Request Data:', data);
+
+            // Simulate successful form submission
+            showMessage('Thank you for your commission request! I will get back to you soon.', 'success');
+            
+            // Optionally clear the form fields
+            form.reset();
+        }
+    </script>
+
+</body>
+</html>
