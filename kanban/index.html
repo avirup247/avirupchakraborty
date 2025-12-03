@@ -1,1 +1,247 @@
-hello kanban
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets API Interface</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <style>
+        @import url('[https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap)');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        input[type="number"], input[type="text"], button {
+            transition: all 0.15s ease-in-out;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .read-area {
+            background-color: #ebf8ff; /* Light Blue */
+        }
+        .write-area {
+            background-color: #f0fff4; /* Light Green */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-6 text-center">Sheet Data Manager</h1>
+        <p class="text-center text-sm text-gray-500 mb-8">
+            Interacting with your Google Sheet via the Apps Script Web App API.
+        </p>
+
+        <!-- Configuration -->
+        <div id="config-card" class="card bg-white p-6 rounded-xl mb-8">
+            <h2 class="text-xl font-bold text-gray-700 mb-4">API Configuration</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="api-url" class="block text-sm font-medium text-gray-700">Web App URL</label>
+                    <input type="text" id="api-url" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 bg-gray-50 text-gray-600" readonly>
+                </div>
+                <div>
+                    <label for="sheet-name" class="block text-sm font-medium text-gray-700">Sheet Name (Tab)</label>
+                    <input type="text" id="sheet-name" value="Sheet1" placeholder="e.g., Data, Sheet1, Logs" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Read Row Area -->
+            <div class="read-area card p-6 rounded-xl">
+                <h2 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    Read Specific Row
+                </h2>
+                <div class="mb-4">
+                    <label for="row-number" class="block text-sm font-medium text-blue-800">Row Number (1 for Headers, 2+ for Data)</label>
+                    <input type="number" id="row-number" value="2" min="1" class="mt-1 block w-full border-blue-300 rounded-md shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <button id="read-button" class="w-full py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+                    <span id="read-btn-text">Read Row Data</span>
+                </button>
+
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-blue-700 mb-2">Read Result</h3>
+                    <pre id="read-result" class="bg-blue-100 p-4 rounded-md text-sm text-blue-900 overflow-x-auto whitespace-pre-wrap">No data read yet.</pre>
+                </div>
+            </div>
+
+            <!-- Write Row Area -->
+            <div class="write-area card p-6 rounded-xl">
+                <h2 class="text-xl font-bold text-green-700 mb-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Append New Row
+                </h2>
+                <p class="text-sm text-green-800 mb-4">
+                    NOTE: The keys used here (Name, Email, Status) must exactly match your sheet's header row.
+                </p>
+                <div class="space-y-3">
+                    <div>
+                        <label for="input-name" class="block text-sm font-medium text-green-800">Name</label>
+                        <input type="text" id="input-name" placeholder="John Doe" class="mt-1 block w-full border-green-300 rounded-md shadow-sm p-3 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div>
+                        <label for="input-email" class="block text-sm font-medium text-green-800">Email</label>
+                        <input type="text" id="input-email" placeholder="john@example.com" class="mt-1 block w-full border-green-300 rounded-md shadow-sm p-3 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div>
+                        <label for="input-status" class="block text-sm font-medium text-green-800">Status</label>
+                        <input type="text" id="input-status" value="New" class="mt-1 block w-full border-green-300 rounded-md shadow-sm p-3 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                </div>
+                
+                <button id="write-button" class="w-full mt-6 py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50">
+                    <span id="write-btn-text">Append Row to Sheet</span>
+                </button>
+
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Write Result</h3>
+                    <pre id="write-result" class="bg-green-100 p-4 rounded-md text-sm text-green-900 overflow-x-auto whitespace-pre-wrap">No data written yet.</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set the deployed Apps Script URL
+        const API_URL = '[https://script.google.com/macros/s/AKfycbxveTK2-7UaM20n-317ruRChfIxMw1S83pSWIsXlyHQvdmnKkHT8ewqyVzdlIPfgvfp/exec](https://script.google.com/macros/s/AKfycbxveTK2-7UaM20n-317ruRChfIxMw1S83pSWIsXlyHQvdmnKkHT8ewqyVzdlIPfgvfp/exec)';
+
+        document.getElementById('api-url').value = API_URL;
+
+        const readButton = document.getElementById('read-button');
+        const writeButton = document.getElementById('write-button');
+        const readResult = document.getElementById('read-result');
+        const writeResult = document.getElementById('write-result');
+        const sheetNameInput = document.getElementById('sheet-name');
+
+        // Helper function for exponential backoff (retry logic)
+        async function fetchWithRetry(url, options = {}, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        // Throw error to be caught below and retry
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error; // If last attempt, rethrow
+                    }
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    // Retry attempt 'i + 1'
+                }
+            }
+        }
+
+
+        // --- READ FUNCTIONALITY ---
+        readButton.addEventListener('click', async () => {
+            const rowNumber = document.getElementById('row-number').value;
+            const sheetName = sheetNameInput.value.trim();
+
+            if (!rowNumber || isNaN(rowNumber) || parseInt(rowNumber) < 1) {
+                readResult.textContent = 'Error: Please enter a valid row number (1 or greater).';
+                return;
+            }
+            if (!sheetName) {
+                readResult.textContent = 'Error: Sheet Name cannot be empty.';
+                return;
+            }
+
+            const url = `${API_URL}?action=read&sheet=${encodeURIComponent(sheetName)}&row=${rowNumber}`;
+            
+            readButton.disabled = true;
+            document.getElementById('read-btn-text').textContent = 'Loading...';
+            readResult.textContent = 'Fetching data...';
+
+            try {
+                const response = await fetchWithRetry(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    readResult.textContent = JSON.stringify(data.data, null, 2);
+                } else {
+                    readResult.textContent = `API Error: ${data.message || 'Unknown error'}`;
+                }
+
+            } catch (error) {
+                readResult.textContent = `Network Error: Could not connect to API. Details: ${error.message}`;
+                console.error('Fetch error:', error);
+            } finally {
+                readButton.disabled = false;
+                document.getElementById('read-btn-text').textContent = 'Read Row Data';
+            }
+        });
+
+
+        // --- WRITE FUNCTIONALITY ---
+        writeButton.addEventListener('click', async () => {
+            const sheetName = sheetNameInput.value.trim();
+            const name = document.getElementById('input-name').value;
+            const email = document.getElementById('input-email').value;
+            const status = document.getElementById('input-status').value;
+            
+            if (!sheetName) {
+                writeResult.textContent = 'Error: Sheet Name cannot be empty.';
+                return;
+            }
+
+            const payload = {
+                "Name": name,
+                "Email": email,
+                "Status": status
+                // You can add more fields here, ensuring they match your sheet headers
+            };
+
+            const url = `${API_URL}?action=write&sheet=${encodeURIComponent(sheetName)}`;
+
+            writeButton.disabled = true;
+            document.getElementById('write-btn-text').textContent = 'Sending...';
+            writeResult.textContent = 'Sending data...';
+
+            try {
+                const response = await fetchWithRetry(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+
+                if (data.success) {
+                    writeResult.textContent = `Success! Row appended to sheet "${sheetName}".\n\nData written:\n${JSON.stringify(data.data, null, 2)}`;
+                    
+                    // Clear inputs on success (except Sheet Name)
+                    document.getElementById('input-name').value = '';
+                    document.getElementById('input-email').value = '';
+                    document.getElementById('input-status').value = 'New';
+
+                } else {
+                    writeResult.textContent = `API Error: ${data.message || 'Unknown error'}`;
+                }
+
+            } catch (error) {
+                writeResult.textContent = `Network Error: Could not write data to API. Details: ${error.message}`;
+                console.error('Fetch error:', error);
+            } finally {
+                writeButton.disabled = false;
+                document.getElementById('write-btn-text').textContent = 'Append Row to Sheet';
+            }
+        });
+
+    </script>
+</body>
+</html>
