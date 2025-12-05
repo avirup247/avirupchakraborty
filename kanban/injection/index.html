@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban QR Uploader</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- QR Code Scanning Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        /* Industrial Sci-Fi Theme Colors */
+        :root {
+            --bg-dark: #111827; /* Darkest Navy/Gray */
+            --card-dark: #1f2937; /* Dark Gray for panels */
+            --accent-neon: #06b6d4; /* Cyan 500 */
+            --warning-yellow: #facc15;
+            --success-green: #4ade80;
+        }
+
+        body {
+            font-family: 'Inter', 'Space Mono', sans-serif;
+            background-color: var(--bg-dark);
+            color: #d1d5db; /* Light Gray text */
+        }
+        
+        .container-card {
+            background-color: var(--card-dark);
+            border: 1px solid #374151; /* Subtle border */
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); /* Soft neon glow */
+        }
+
+        /* Styling for the scanner box itself */
+        #reader {
+            width: 100%;
+            border: 3px solid var(--accent-neon);
+            box-shadow: 0 0 15px var(--accent-neon);
+            border-radius: 0.5rem;
+        }
+
+        .input-display {
+            background-color: #0d1217;
+            border: 1px solid #374151;
+            padding: 0.75rem;
+            color: var(--accent-neon);
+            font-family: 'Space Mono', monospace;
+            min-height: 5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8 flex justify-center items-start">
+
+    <div class="w-full max-w-xl space-y-8">
+        <header class="text-center p-6 container-card">
+            <h1 class="text-3xl font-bold text-cyan-400 font-mono tracking-widest">KANBAN DATA INJECTION MODULE</h1>
+            <p id="status-message" class="text-sm mt-2 text-gray-400">STATUS: Initializing Hardware...</p>
+            
+            <!-- Link to Keystroke Scanner Page -->
+            <div class="mt-4 pt-3 border-t border-gray-700">
+                <a href="scanner.html" class="text-sm font-mono text-yellow-400 hover:text-yellow-300 transition duration-200 underline underline-offset-4 decoration-yellow-400/50">
+                    ⇥ Switch  Scanner
+                </a>
+            </div>
+        </header>
+        
+        <!-- Current Scan Step Indicator -->
+        <div id="step-indicator" class="container-card p-4 text-center font-mono text-lg border-2 border-yellow-400/50 text-yellow-400">
+            STEP 1: Scan Transaction ID (TID)
+        </div>
+
+        <!-- QR Scanner and Controls -->
+        <div class="p-6 container-card space-y-4">
+            <h2 class="text-xl font-semibold text-gray-300 border-b border-gray-700 pb-2">SCAN INPUT</h2>
+            
+            <!-- Live Scanner Viewport -->
+            <div id="reader" class="rounded-lg overflow-hidden"></div>
+
+            <div id="scan-feedback" class="text-center text-sm p-3 text-cyan-300 font-mono hidden">Awaiting scan...</div>
+
+            <button id="start-scan-btn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 rounded transition duration-200">
+                Start Scanner
+            </button>
+        </div>
+
+        <!-- Data Display and Submission -->
+        <div class="p-6 container-card space-y-4">
+            <h2 class="text-xl font-semibold text-gray-300 border-b border-gray-700 pb-2">DATA PAYLOAD</h2>
+            
+            <label class="block text-sm font-medium text-gray-400">Transaction ID (TID) & Last Log Check:</label>
+            <div id="tid-output" class="input-display rounded text-base break-all h-auto min-h-min text-yellow-400">
+                Awaiting TID scan...
+            </div>
+
+            <label class="block text-sm font-medium text-gray-400">Final Data Object (with Time):</label>
+            <pre id="parsed-data-output" class="input-display rounded text-xs overflow-auto h-32 whitespace-pre-wrap">
+                (Scan both codes to generate final JSON payload)
+            </pre>
+
+            <button id="upload-btn" disabled class="w-full bg-gray-700 text-gray-500 font-bold py-3 rounded transition duration-200 cursor-not-allowed">
+                Upload Merged Data (Disabled)
+            </button>
+
+            <!-- Submission Status Message -->
+            <p id="submission-status" class="text-center text-sm font-mono"></p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, setLogLevel, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // User-provided Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-5Hjv6WZGU6jjGvzbNQGZq1N5eTxhS-4",
+            authDomain: "kanban-171e6.firebaseapp.com",
+            projectId: "kanban-171e6",
+            storageBucket: "kanban-171e6.firebasestorage.app",
+            messagingSenderId: "131597045172",
+            appId: "1:131597045172:web:27177f11d68e495fbbb6e1"
+        };
+        
+        let db = null;
+        let html5QrCode = null;
+        let currentTID = null; 
+        let mergedDataObject = null; 
+        let lastLogData = null; // Stores the data object (excluding TID/TIME) of the last log for the currentTID
+
+        // DOM Elements
+        const statusMessageElement = document.getElementById('status-message');
+        const tidOutput = document.getElementById('tid-output');
+        const parsedDataOutput = document.getElementById('parsed-data-output');
+        const uploadBtn = document.getElementById('upload-btn');
+        const submissionStatus = document.getElementById('submission-status');
+        const scanFeedback = document.getElementById('scan-feedback');
+        const startScanBtn = document.getElementById('start-scan-btn');
+        const stepIndicator = document.getElementById('step-indicator');
+
+        // Set Firebase logging level for debugging
+        setLogLevel('Debug');
+
+        // --- UI Update Functions ---
+        const updateUploadButton = (enable, text) => {
+            uploadBtn.disabled = !enable;
+            uploadBtn.textContent = text;
+            if (enable) {
+                uploadBtn.className = 'w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded transition duration-200 cursor-pointer shadow-md shadow-green-600/50';
+            } else {
+                uploadBtn.className = 'w-full bg-gray-700 text-gray-500 font-bold py-3 rounded transition duration-200 cursor-not-allowed';
+            }
+        };
+
+        const updateSubmissionStatus = (message, colorClass = 'text-gray-400') => {
+            submissionStatus.className = `text-center text-sm font-mono ${colorClass}`;
+            submissionStatus.textContent = message;
+        };
+        
+        const updateStepIndicator = (step) => {
+            if (step === 1) {
+                stepIndicator.innerHTML = 'STEP 1: Scan Transaction ID (TID)';
+                stepIndicator.classList.remove('border-cyan-400/50', 'border-green-400/50', 'text-cyan-400', 'text-green-400');
+                stepIndicator.classList.add('border-yellow-400/50', 'text-yellow-400');
+            } else if (step === 2) {
+                stepIndicator.innerHTML = 'STEP 2: Scan Data Payload (JSON)';
+                stepIndicator.classList.remove('border-yellow-400/50', 'border-green-400/50', 'text-yellow-400', 'text-green-400');
+                stepIndicator.classList.add('border-cyan-400/50', 'text-cyan-400');
+            } else {
+                stepIndicator.innerHTML = 'COMPLETE: Ready for Upload / Duplicate Detected';
+                stepIndicator.classList.remove('border-yellow-400/50', 'border-cyan-400/50', 'text-cyan-400', 'text-yellow-400');
+                stepIndicator.classList.add('border-green-400/50', 'text-green-400');
+            }
+        }
+
+        // --- Data Check Logic ---
+
+        const checkLastLog = async (tid) => {
+            lastLogData = null;
+            updateSubmissionStatus(`TID captured. Querying last log for TID: ${tid}...`, 'text-yellow-400');
+            
+            try {
+                const kanbanCollectionRef = collection(db, 'kanban');
+                // Query for all documents with the matching TID
+                const q = query(kanbanCollectionRef, where('TID', '==', tid));
+                
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    updateSubmissionStatus(`No previous log found for TID: ${tid}. Ready for Step 2.`, 'text-cyan-400');
+                    return;
+                }
+
+                // Client-side sorting is required to find the latest document
+                let latestDoc = null;
+                let latestTime = 0;
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Parse TIME field (expected to be an ISO string)
+                    const docTime = data.TIME ? new Date(data.TIME).getTime() : 0;
+                    
+                    if (docTime > latestTime) {
+                        latestTime = docTime;
+                        latestDoc = data;
+                    }
+                });
+
+                if (latestDoc) {
+                    // Extract core data fields for comparison (remove TIME and TID)
+                    const { TIME, TID, ...coreData } = latestDoc;
+                    lastLogData = coreData;
+                    
+                    // Display the last logged time in the tid output box for context
+                    tidOutput.textContent = `TID: ${tid} | Last Event: ${latestDoc.TIME}`;
+                    updateSubmissionStatus(`Last event recorded at ${latestDoc.TIME}. Ready for Step 2.`, 'text-cyan-400');
+                } else {
+                    updateSubmissionStatus(`Previous logs found, but TIME data invalid. Proceed with Step 2.`, 'text-cyan-400');
+                }
+                
+            } catch (error) {
+                console.error("Error checking last log:", error);
+                // On error, we proceed without comparison to avoid blocking the user
+                updateSubmissionStatus('Error querying last log. Proceeding without duplicate check.', 'text-yellow-400');
+            }
+        };
+
+        // --- QR Code Logic ---
+
+        const onScanSuccess = (decodedText, decodedResult) => {
+            // Stop scanning once a code is found
+            html5QrCode.stop().then(() => {
+                scanFeedback.classList.add('hidden');
+                startScanBtn.textContent = 'Continue Scanning';
+                startScanBtn.classList.remove('hidden');
+
+                if (!currentTID) {
+                    // --- STEP 1: CAPTURE TID ---
+                    currentTID = decodedText.trim();
+                    mergedDataObject = null;
+                    
+                    if (currentTID.length > 0) {
+                        tidOutput.textContent = `TID CAPTURED: ${currentTID}`;
+                        updateStepIndicator(2);
+                        
+                        // Check last log and update state
+                        checkLastLog(currentTID); 
+
+                    } else {
+                        // Handle case where TID scan is empty
+                        currentTID = null;
+                        tidOutput.textContent = 'ERROR: Scanned data was empty.';
+                        updateSubmissionStatus('ERROR: Empty scan received. Restarting scan.', 'text-red-400');
+                        updateStepIndicator(1);
+                        setTimeout(() => startScanner(), 2000);
+                        return;
+                    }
+
+                } else {
+                    // --- STEP 2: CAPTURE JSON PAYLOAD ---
+                    updateSubmissionStatus('Payload Received. Validating structure...', 'text-yellow-400');
+                    
+                    try {
+                        const dataObject = JSON.parse(decodedText);
+                        let isDuplicate = false; 
+
+                        // 1. **DUPLICATE CHECK:** Compare new payload with last log
+                        if (lastLogData) {
+                            // Create a subset of the new object matching the keys of the last log for comparison
+                            const newCoreData = {};
+                            const keys = Object.keys(lastLogData).sort();
+                            
+                            keys.forEach(key => {
+                                // Only include keys present in the last log data and the new scan
+                                newCoreData[key] = dataObject[key] !== undefined ? dataObject[key] : null;
+                            });
+                            
+                            // Compare serialized objects for reliable deep comparison
+                            const lastLogString = JSON.stringify(lastLogData, keys);
+                            const newPayloadString = JSON.stringify(newCoreData, keys);
+
+                            if (lastLogString === newPayloadString) {
+                                isDuplicate = true;
+                            }
+                        }
+                        
+                        if (isDuplicate) {
+                            // --- DUPLICATE DETECTED ---
+                            mergedDataObject = null;
+                            parsedDataOutput.textContent = JSON.stringify(dataObject, null, 2); 
+                            updateUploadButton(false, "DUPLICATE DATA (Upload Blocked)");
+                            updateSubmissionStatus('ALERT: Payload is identical to the last logged event. Upload blocked.', 'text-red-400');
+                            updateStepIndicator(3);
+                            return; 
+                        }
+
+                        // 2. Auto-generate current timestamp
+                        const timestamp = new Date().toISOString(); 
+
+                        // 3. Merge data and finalize object
+                        mergedDataObject = {
+                            ...dataObject,
+                            TID: currentTID,
+                            TIME: timestamp
+                        };
+
+                        // 4. Display merged data (formatted)
+                        parsedDataOutput.textContent = JSON.stringify(mergedDataObject, null, 2);
+
+                        // 5. Enable upload button
+                        updateUploadButton(true, "Upload FINAL Merged Payload");
+                        updateSubmissionStatus('VALIDATION SUCCESS. Ready for final upload.', 'text-green-400');
+                        updateStepIndicator(3);
+
+                    } catch (e) {
+                        console.error("JSON Parse Error:", e);
+                        mergedDataObject = null;
+                        parsedDataOutput.textContent = `ERROR: Data is not valid JSON. ${e.message}`;
+                        updateUploadButton(false, "Invalid JSON (Cannot Upload)");
+                        updateSubmissionStatus('ERROR: Invalid data structure. Restart scan to try again.', 'text-red-400');
+                        updateStepIndicator(2); 
+                    }
+                }
+            }).catch(err => {
+                console.error("Error stopping QR scanner:", err);
+            });
+        };
+
+        const onScanError = (errorMessage) => {
+            // Suppress minor errors during active scan
+        };
+
+        const startScanner = (forceRestart = false) => {
+            if (!html5QrCode) {
+                 html5QrCode = new Html5Qrcode("reader");
+            }
+
+            if (forceRestart) {
+                currentTID = null;
+                mergedDataObject = null;
+                lastLogData = null; // Clear last log data on full restart
+            }
+            
+            if (!currentTID) {
+                tidOutput.textContent = 'Awaiting TID scan...';
+                parsedDataOutput.textContent = '(Scan both codes to generate final JSON payload)';
+                updateStepIndicator(1);
+            } else {
+                parsedDataOutput.textContent = '(Awaiting JSON Payload scan)';
+                updateStepIndicator(2);
+            }
+
+            updateUploadButton(false, "Upload Merged Data (Disabled)");
+            updateSubmissionStatus('Scanning active. Point camera at QR code.');
+            scanFeedback.classList.remove('hidden');
+            startScanBtn.classList.add('hidden');
+
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config, 
+                onScanSuccess, 
+                onScanError
+            ).catch((err) => {
+                console.error("Camera start failed:", err);
+                updateSubmissionStatus('ERROR: Camera access denied or unavailable.', 'text-red-400');
+                scanFeedback.classList.add('hidden');
+                startScanBtn.classList.remove('hidden');
+                startScanBtn.textContent = 'Retry Start Scanner';
+            });
+        };
+
+        // --- Firebase Upload Logic ---
+        const uploadData = async () => {
+            if (!db || !mergedDataObject) {
+                updateSubmissionStatus('System not ready or final data payload is missing.', 'text-red-400');
+                return;
+            }
+
+            updateUploadButton(false, "Transmitting...");
+            updateSubmissionStatus('Transmitting payload to server...', 'text-yellow-400');
+
+            try {
+                const kanbanCollectionRef = collection(db, 'kanban');
+                
+                // Add the new document
+                const docRef = await addDoc(kanbanCollectionRef, mergedDataObject);
+                
+                updateSubmissionStatus(`SUCCESS: Event logged. Doc ID: ${docRef.id}`, 'text-success-green');
+                
+                // Reset for next full transaction
+                currentTID = null;
+                mergedDataObject = null;
+                lastLogData = null;
+                tidOutput.textContent = 'Awaiting TID scan...';
+                parsedDataOutput.textContent = '(Successfully uploaded. System reset.)';
+
+                setTimeout(() => {
+                    updateUploadButton(false, "Upload Complete");
+                    startScanBtn.textContent = 'Start New Transaction Scan';
+                    startScanBtn.classList.remove('hidden');
+                    updateStepIndicator(1);
+                }, 2000);
+                
+            } catch (error) {
+                console.error("Firestore Upload Error:", error);
+                
+                let errorMessage;
+                if (error.code === 'permission-denied') {
+                    errorMessage = "ACCESS DENIED (Error 403). Check if you have write access to 'kanban'.";
+                } else {
+                    errorMessage = `UPLOAD FAILED: ${error.message}`;
+                }
+                
+                updateSubmissionStatus(errorMessage, 'text-red-400');
+                updateUploadButton(true, "RETRY UPLOAD"); 
+            }
+        };
+
+        // --- Event Listeners ---
+        uploadBtn.addEventListener('click', uploadData);
+        startScanBtn.addEventListener('click', () => {
+            if (!currentTID && !mergedDataObject) {
+                 startScanner(true);
+            } else {
+                 startScanner(false);
+            }
+        });
+
+
+        // --- Main Initialization (IIFE) ---
+        (async () => {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                
+                statusMessageElement.innerHTML = `STATUS: ONLINE (Project: <span class="font-mono text-cyan-400">${firebaseConfig.projectId}</span>)`;
+
+                startScanBtn.classList.remove('hidden');
+                updateSubmissionStatus('System ready. Click "Start Scanner" to begin transaction.', 'text-gray-400');
+                updateStepIndicator(1);
+
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+                statusMessageElement.textContent = `STATUS: CRITICAL OFFLINE (Initialization Failed)`;
+                updateSubmissionStatus('CRITICAL ERROR: Failed to connect to Firebase.', 'text-red-400');
+                startScanBtn.disabled = true;
+                startScanBtn.textContent = 'Cannot Start (Firebase Error)';
+                startScanBtn.classList.remove('bg-cyan-600');
+                startScanBtn.classList.add('bg-red-800');
+            }
+        })();
+
+    </script>
+</body>
+</html>
