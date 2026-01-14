@@ -1,146 +1,306 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Code, 
-  Cpu, 
-  Settings, 
-  Lightbulb, 
-  Gamepad2, 
-  Smartphone, 
-  ChevronRight, 
-  Github, 
-  Linkedin, 
-  Mail, 
-  ExternalLink,
-  Layers,
-  Zap,
-  Globe,
-  Terminal
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avirup Chakraborty | Multi-Disciplinary Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
+        .hero-gradient { background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 50%); }
+        .bento-card:hover { transform: translateY(-5px); border-color: rgba(37, 99, 235, 0.5); }
+        .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .project-card:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 antialiased">
 
-const App = () => {
-  const [activeTab, setActiveTab] = useState('all');
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const expertise = [
-    {
-      title: "App & Game Dev",
-      icon: <Gamepad2 className="w-6 h-6" />,
-      description: "High-performance mobile apps and immersive 2D/3D games using Unity and React Native.",
-      color: "bg-blue-500/10 text-blue-400",
-      skills: ["React Native", "Unity", "C#", "Firebase"]
-    },
-    {
-      title: "Electronics & IoT",
-      icon: <Cpu className="w-6 h-6" />,
-      description: "Custom PCB design, ESP32/Arduino integration, and RFID-based automation systems.",
-      color: "bg-emerald-500/10 text-emerald-400",
-      skills: ["ESP32", "Circuit Design", "RFID", "MQTT"]
-    },
-    {
-      title: "Mechanical Design",
-      icon: <Settings className="w-6 h-6" />,
-      description: "Automation workflow design, 3D modeling, and mechanical systems optimization.",
-      color: "bg-orange-500/10 text-orange-400",
-      skills: ["CAD", "Automation", "Robotics", "Manufacturing"]
-    },
-    {
-      title: "Technical Consulting",
-      icon: <Lightbulb className="w-6 h-6" />,
-      description: "Strategic advice on cross-disciplinary tech stacks and product feasibility.",
-      color: "bg-purple-500/10 text-purple-400",
-      skills: ["Architecture", "Strategy", "Feasibility", "R&D"]
-    }
-  ];
-
-  const projects = [
-    {
-      title: "Smart Factory Simulation",
-      category: "game",
-      tech: "Unity, C#",
-      description: "A complex isometric simulation managing factory logistics and road-detection logic.",
-      link: "#"
-    },
-    {
-      title: "RFID Attendance System",
-      category: "electronics",
-      tech: "ESP32, Google Cloud",
-      description: "IoT solution bridging hardware scanners with real-time cloud data logging.",
-      link: "#"
-    },
-    {
-      title: "Automation Dashboard",
-      category: "software",
-      tech: "React, Node.js",
-      description: "Unified interface for monitoring hardware sensors and mechanical output.",
-      link: "#"
-    },
-    {
-      title: "Precision Robot Arm",
-      category: "mechanical",
-      tech: "Arduino, CAD",
-      description: "A 4-axis robotic arm designed for automated small-scale sorting tasks.",
-      link: "#"
-    }
-  ];
-
-  const filteredProjects = activeTab === 'all' 
-    ? projects 
-    : projects.filter(p => p.category === activeTab);
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30">
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/80 backdrop-blur-md py-4 border-b border-slate-800' : 'bg-transparent py-6'}`}>
-        <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-          <div className="text-xl font-bold tracking-tighter flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">A</div>
-            AVIRUP.CH
-          </div>
-          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
-            <a href="#about" className="hover:text-blue-400 transition-colors">Expertise</a>
-            <a href="#projects" className="hover:text-blue-400 transition-colors">Projects</a>
-            <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
-          </div>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all">
-            Get in Touch
-          </button>
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300 glass border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="text-xl font-bold tracking-tighter flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white">A</div>
+                AVIRUP.CH
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#expertise" class="hover:text-blue-400 transition-colors">Expertise</a>
+                <a href="#projects" class="hover:text-blue-400 transition-colors">Projects</a>
+                <a href="#contact" class="hover:text-blue-400 transition-colors">Contact</a>
+            </div>
+            <a href="mailto:avirup@example.com" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all">
+                Work With Me
+            </a>
         </div>
-      </nav>
+    </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-purple-600 rounded-full blur-[120px]"></div>
+    <!-- Hero Section -->
+    <section class="relative pt-48 pb-24 px-6 overflow-hidden hero-gradient">
+        <div class="max-w-6xl mx-auto">
+            <div class="max-w-3xl">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase mb-4 border border-blue-500/20">
+                    Solutions Architect & Engineer
+                </span>
+                <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                    Where <span class="text-blue-500 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Software meets Machines.</span>
+                </h1>
+                <p class="text-lg text-slate-400 mb-10 leading-relaxed max-w-2xl">
+                    I am Avirup Chakraborty. I provide high-performance solutions across App Development, Game Logic, Mechanical Automation, and IoT Electronics.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#projects" class="bg-white text-slate-950 px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-all">
+                        Explore Portfolio <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <div class="flex items-center gap-3 px-4">
+                        <a href="#" class="p-3 bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"><i class="fa-brands fa-github text-lg"></i></a>
+                        <a href="#" class="p-3 bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"><i class="fa-brands fa-linkedin text-lg"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div className="max-w-6xl mx-auto">
-          <div className="max-w-3xl">
-            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase mb-4 border border-blue-500/20">
-              Solutions Provider
-            </span>
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-6 leading-[1.1]">
-              Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Bits & Atoms.</span>
-            </h1>
-            <p className="text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl">
-              I am Avirup Chakraborty—a cross-disciplinary engineer specializing in 
-              software architecture, hardware automation, and mechanical systems. 
-              I build solutions that bridge the digital-physical divide.
+    <!-- Expertise Section -->
+    <section id="expertise" class="py-24 px-6 bg-slate-900/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16">
+                <h2 class="text-3xl font-bold mb-4">Core Disciplines</h2>
+                <div class="h-1 w-20 bg-blue-600"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- App/Game -->
+                <div class="bento-card p-8 rounded-3xl bg-slate-950 border border-slate-800 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-6 text-xl">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">App & Game Dev</h3>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                        Full-stack apps and 2D/3D games built for performance and scale.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-blue-400">Unity</span>
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-blue-400">React</span>
+                    </div>
+                </div>
+
+                <!-- Electronics -->
+                <div class="bento-card p-8 rounded-3xl bg-slate-950 border border-slate-800 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-6 text-xl">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Electronics & IoT</h3>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                        ESP32 integration, RFID systems, and custom smart-device architecture.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-emerald-400">ESP32</span>
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-emerald-400">Sensors</span>
+                    </div>
+                </div>
+
+                <!-- Mechanical -->
+                <div class="bento-card p-8 rounded-3xl bg-slate-950 border border-slate-800 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-500/10 text-orange-400 flex items-center justify-center mb-6 text-xl">
+                        <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Mechanical Eng.</h3>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                        Automation workflows, CAD modeling, and industrial robotics design.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-orange-400">CAD</span>
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-orange-400">PLCs</span>
+                    </div>
+                </div>
+
+                <!-- Consulting -->
+                <div class="bento-card p-8 rounded-3xl bg-slate-950 border border-slate-800 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-6 text-xl">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Consultancy</h3>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">
+                        Strategic R&D, technical feasibility studies, and digital transformation.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-purple-400">R&D</span>
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-900 border border-slate-800 text-purple-400">Audit</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                <div>
+                    <h2 class="text-3xl font-bold mb-4">Project Gallery</h2>
+                    <p class="text-slate-400">Turning complex problems into elegant hardware and software solutions.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1: Game Dev -->
+                <div class="project-card group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                    <div class="aspect-video bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-city text-5xl text-slate-800 group-hover:text-blue-500/50 transition-colors"></i>
+                        <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-blue-400 text-[10px] font-bold uppercase tracking-widest">Unity & C#</span>
+                            <i class="fa-solid fa-gamepad text-slate-700"></i>
+                        </div>
+                        <h3 class="text-xl font-bold group-hover:text-blue-400 transition-colors">Factory Simulation Engine</h3>
+                        <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                            Isometric simulation managing complex logistics, spatial awareness, and resource flow logic.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Project 2: IoT -->
+                <div class="project-card group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                    <div class="aspect-video bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-tower-broadcast text-5xl text-slate-800 group-hover:text-emerald-500/50 transition-colors"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">IoT & Hardware</span>
+                            <i class="fa-solid fa-wifi text-slate-700"></i>
+                        </div>
+                        <h3 class="text-xl font-bold group-hover:text-emerald-400 transition-colors">Smart RFID Attendance</h3>
+                        <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                            ESP32-based hardware system with real-time cloud logging and secure ID verification.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Project 3: Robotics -->
+                <div class="project-card group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                    <div class="aspect-video bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-robot text-5xl text-slate-800 group-hover:text-orange-500/50 transition-colors"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-orange-400 text-[10px] font-bold uppercase tracking-widest">Robotics</span>
+                            <i class="fa-solid fa-screwdriver-wrench text-slate-700"></i>
+                        </div>
+                        <h3 class="text-xl font-bold group-hover:text-orange-400 transition-colors">4-Axis Pick & Place Arm</h3>
+                        <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                            Mechanical design and C++ firmware for an automated sorting robot arm for micro-factories.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Project 4: App Dev -->
+                <div class="project-card group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                    <div class="aspect-video bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-chart-line text-5xl text-slate-800 group-hover:text-blue-500/50 transition-colors"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-blue-400 text-[10px] font-bold uppercase tracking-widest">App Dev</span>
+                            <i class="fa-solid fa-mobile-screen text-slate-700"></i>
+                        </div>
+                        <h3 class="text-xl font-bold group-hover:text-blue-400 transition-colors">FinTech Analytics Hub</h3>
+                        <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                            Cross-platform React Native app featuring real-time data visualization and secure API integration.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Project 5: Automation -->
+                <div class="project-card group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                    <div class="aspect-video bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-industry text-5xl text-slate-800 group-hover:text-purple-500/50 transition-colors"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-purple-400 text-[10px] font-bold uppercase tracking-widest">Automation</span>
+                            <i class="fa-solid fa-bolt text-slate-700"></i>
+                        </div>
+                        <h3 class="text-xl font-bold group-hover:text-purple-400 transition-colors">Warehouse Workflow Engine</h3>
+                        <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                            Custom software solution for optimizing picking routes and inventory management via PLC triggers.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Project 6: Consultancy -->
+                <div class="project-card group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                    <div class="aspect-video bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                        <i class="fa-solid fa-file-contract text-5xl text-slate-800 group-hover:text-slate-400 transition-colors"></i>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Strategy</span>
+                            <i class="fa-solid fa-lightbulb text-slate-700"></i>
+                        </div>
+                        <h3 class="text-xl font-bold group-hover:text-white transition-colors">Solar Micro-Grid Study</h3>
+                        <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                            Technical feasibility report and ROI analysis for off-grid renewable energy installations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section id="contact" class="py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center glass p-12 rounded-[3rem] border border-slate-800 shadow-2xl">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Have a <span class="text-blue-500">Complex Problem?</span></h2>
+            <p class="text-lg text-slate-400 mb-10 leading-relaxed">
+                Whether it's hardware engineering, game architecture, or high-level technical consulting, 
+                let's build a solution that works across every dimension.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-white text-slate-950 px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-all">
-                View Projects <ChevronRight className="w-4 h-4" />
-              </button>
-              <div className="flex items-center gap-3 px-4">
-                <a href="#" className="p-3 bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"><Github className="w-5 h-5" /></a>
-                <a href="#" className="p-3 bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"><Linkedin className="w-5 h-5" /></a>
-              </div>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="mailto:avirup@example.com" class="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-paper-plane"></i> Send an Inquiry
+                </a>
+                <a href="#" class="bg-slate-800 hover:bg-slate-700 text-white px-10 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-download"></i> Full Resume
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 px-6 border-t border-slate-900">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="text-center md:text-left">
+                    <div class="text-2xl font-black tracking-tighter flex items-center gap-2 mb-2">
+                        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-sm">A</div>
+                        AVIRUP CHAKRABORTY
+                    </div>
+                    <p class="text-slate-500 text-sm max-w-xs">Cross-disciplinary solutions for the modern technological landscape.</p>
+                </div>
+                
+                <div class="flex gap-10">
+                    <div class="flex flex-col gap-2">
+                        <span class="text-xs font-bold uppercase text-slate-400 tracking-widest">Quick Links</span>
+                        <a href="#expertise" class="text-sm text-slate-500 hover:text-blue-400">Expertise</a>
+                        <a href="#projects" class="text-sm text-slate-500 hover:text-blue-400">Projects</a>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-xs font-bold uppercase text-slate-400 tracking-widest">Connect</span>
+                        <a href="#" class="text-sm text-slate-500 hover:text-blue-400">GitHub</a>
+                        <a href="#" class="text-sm text-slate-500 hover:text-blue-400">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-16 pt-8 border-t border-slate-900/50 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-600 text-[10px] uppercase font-bold tracking-widest">
+                <span>&copy; 2024 — Designed & Engineered by Avirup Chakraborty</span>
+                <div class="flex gap-4">
+                    <span>Hardware</span>
+                    <span class="text-blue-900">•</span>
+                    <span>Softwar              </div>
             </div>
           </div>
         </div>
@@ -577,5 +737,6 @@ export default App;
 
 </body>
 </html>
+
 
 
