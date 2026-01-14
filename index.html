@@ -1,145 +1,302 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parthib's Art - Portfolio</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Times New Roman font (using a system font stack for reliability) -->
-    <style>
-        body {
-            /* Changed from Inter to Times New Roman/Serif equivalent */
-            font-family: 'Times New Roman', Times, serif; 
-            color: #333; /* Dark gray text */
-            background-color: #f7f7f7; /* Light off-white background */
-        }
-        .header-link:hover {
-            color: #4A4A4A; /* Slightly darker on hover */
-        }
-        .text-section-title {
-            font-size: 2.5rem; /* Large size for titles like 'Gallery' or 'About the Artist' */
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            color: #1A1A1A;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-        .stat-label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #666;
-        }
-        /* Styling for the focus-based scrolling navigation */
-        .content-section {
-            scroll-margin-top: 5rem; /* Offset for fixed header */
-        }
-        /* CSS for the blur effect on image hover */
-        .blur-target {
-            transition: filter 0.3s ease-in-out;
-        }
-        .blur-target.blurred {
-            filter: blur(5px);
-        }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary': '#1A1A1A',
-                        'secondary': '#555555',
-                        'accent': '#000000',
-                    }
-                }
-            }
-        }
+import React, { useState, useEffect } from 'react';
+import { 
+  Code, 
+  Cpu, 
+  Settings, 
+  Lightbulb, 
+  Gamepad2, 
+  Smartphone, 
+  ChevronRight, 
+  Github, 
+  Linkedin, 
+  Mail, 
+  ExternalLink,
+  Layers,
+  Zap,
+  Globe,
+  Terminal
+} from 'lucide-react';
 
-        // Function to initialize Lucide icons and interactivity
-        window.onload = function() {
-            lucide.createIcons();
-            
-            // Attach smooth scrolling logic
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
+const App = () => {
+  const [activeTab, setActiveTab] = useState('all');
+  const [scrolled, setScrolled] = useState(false);
 
-            // Interactivity for blur effect on the artist portrait
-            const artistImage = document.getElementById('artist-portrait');
-            if (artistImage) {
-                artistImage.addEventListener('mouseenter', () => {
-                    artistImage.classList.add('blurred');
-                });
-                artistImage.addEventListener('mouseleave', () => {
-                    artistImage.classList.remove('blurred');
-                });
-            }
-        };
-    </script>
-</head>
-<body>
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    <!-- Fixed Header/Navigation -->
-    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between max-w-7xl">
-            <!-- Logo/Brand -->
-            <div class="flex items-center space-x-2">
-                <span class="font-serif text-xl font-bold text-primary tracking-tight">Parthib's Art</span>
+  const expertise = [
+    {
+      title: "App & Game Dev",
+      icon: <Gamepad2 className="w-6 h-6" />,
+      description: "High-performance mobile apps and immersive 2D/3D games using Unity and React Native.",
+      color: "bg-blue-500/10 text-blue-400",
+      skills: ["React Native", "Unity", "C#", "Firebase"]
+    },
+    {
+      title: "Electronics & IoT",
+      icon: <Cpu className="w-6 h-6" />,
+      description: "Custom PCB design, ESP32/Arduino integration, and RFID-based automation systems.",
+      color: "bg-emerald-500/10 text-emerald-400",
+      skills: ["ESP32", "Circuit Design", "RFID", "MQTT"]
+    },
+    {
+      title: "Mechanical Design",
+      icon: <Settings className="w-6 h-6" />,
+      description: "Automation workflow design, 3D modeling, and mechanical systems optimization.",
+      color: "bg-orange-500/10 text-orange-400",
+      skills: ["CAD", "Automation", "Robotics", "Manufacturing"]
+    },
+    {
+      title: "Technical Consulting",
+      icon: <Lightbulb className="w-6 h-6" />,
+      description: "Strategic advice on cross-disciplinary tech stacks and product feasibility.",
+      color: "bg-purple-500/10 text-purple-400",
+      skills: ["Architecture", "Strategy", "Feasibility", "R&D"]
+    }
+  ];
+
+  const projects = [
+    {
+      title: "Smart Factory Simulation",
+      category: "game",
+      tech: "Unity, C#",
+      description: "A complex isometric simulation managing factory logistics and road-detection logic.",
+      link: "#"
+    },
+    {
+      title: "RFID Attendance System",
+      category: "electronics",
+      tech: "ESP32, Google Cloud",
+      description: "IoT solution bridging hardware scanners with real-time cloud data logging.",
+      link: "#"
+    },
+    {
+      title: "Automation Dashboard",
+      category: "software",
+      tech: "React, Node.js",
+      description: "Unified interface for monitoring hardware sensors and mechanical output.",
+      link: "#"
+    },
+    {
+      title: "Precision Robot Arm",
+      category: "mechanical",
+      tech: "Arduino, CAD",
+      description: "A 4-axis robotic arm designed for automated small-scale sorting tasks.",
+      link: "#"
+    }
+  ];
+
+  const filteredProjects = activeTab === 'all' 
+    ? projects 
+    : projects.filter(p => p.category === activeTab);
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30">
+      {/* Navigation */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/80 backdrop-blur-md py-4 border-b border-slate-800' : 'bg-transparent py-6'}`}>
+        <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+          <div className="text-xl font-bold tracking-tighter flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">A</div>
+            AVIRUP.CH
+          </div>
+          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+            <a href="#about" className="hover:text-blue-400 transition-colors">Expertise</a>
+            <a href="#projects" className="hover:text-blue-400 transition-colors">Projects</a>
+            <a href="#contact" className="hover:text-blue-400 transition-colors">Contact</a>
+          </div>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all">
+            Get in Touch
+          </button>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-20">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-600 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-20 right-10 w-72 h-72 bg-purple-600 rounded-full blur-[120px]"></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl">
+            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 text-blue-400 text-xs font-bold tracking-widest uppercase mb-4 border border-blue-500/20">
+              Solutions Provider
+            </span>
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-6 leading-[1.1]">
+              Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Bits & Atoms.</span>
+            </h1>
+            <p className="text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl">
+              I am Avirup Chakraborty—a cross-disciplinary engineer specializing in 
+              software architecture, hardware automation, and mechanical systems. 
+              I build solutions that bridge the digital-physical divide.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button className="bg-white text-slate-950 px-8 py-4 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-50 transition-all">
+                View Projects <ChevronRight className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-3 px-4">
+                <a href="#" className="p-3 bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"><Github className="w-5 h-5" /></a>
+                <a href="#" className="p-3 bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"><Linkedin className="w-5 h-5" /></a>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <!-- Desktop Navigation Links -->
-            <div class="hidden sm:flex items-center space-x-8 text-sm font-medium text-secondary">
-                <a href="#home" class="header-link hover:text-accent transition duration-150">Home</a>
-                <a href="#about" class="header-link hover:text-accent transition duration-150">About</a>
-                <a href="#gallery" class="header-link hover:text-accent transition duration-150">Gallery</a>
-                <a href="#commission" class="header-link hover:text-accent transition duration-150">Commission</a>
-                <!-- Log in/User Icon -->
-                <button class="text-secondary hover:text-accent transition duration-150 p-1 rounded-full">
-                    <i data-lucide="log-in" class="w-5 h-5"></i>
-                </button>
-            </div>
+      {/* Expertise Bento Grid */}
+      <section id="about" className="py-24 px-6 bg-slate-900/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold mb-4">Core Expertise</h2>
+            <div className="h-1 w-20 bg-blue-600"></div>
+          </div>
 
-            <!-- Mobile Menu Button (Hamburger) - Not implemented here for brevity/focus on content sections, but standard practice -->
-        </nav>
-    </header>
-
-    <main class="pt-20">
-
-        <!-- 1. Home Section -->
-        <section id="home" class="content-section container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl mb-24">
-            <div class="flex flex-col items-center justify-center min-h-[50vh] text-center">
-                <div class="max-w-xl">
-                    <h1 class="text-5xl sm:text-6xl font-extrabold text-primary leading-tight mb-4">
-                        Sketches That Tell Stories
-                    </h1>
-                    <p class="text-lg text-secondary mb-8">
-                        Hand-drawn art capturing moments, emotions, and imagination through pencil and paper.
-                    </p>
-                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center">
-                        <a href="#gallery" class="bg-accent text-white py-3 px-8 rounded-lg font-medium shadow-lg hover:bg-gray-800 transition duration-300">
-                            View Gallery
-                        </a>
-                        <a href="#commission" class="bg-white text-accent py-3 px-8 rounded-lg font-medium shadow-md border border-gray-200 hover:bg-gray-100 transition duration-300">
-                            Commission Work
-                        </a>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {expertise.map((item, i) => (
+              <div key={i} className="group p-8 rounded-3xl bg-slate-950 border border-slate-800 hover:border-blue-500/50 transition-all duration-300">
+                <div className={`w-12 h-12 rounded-2xl ${item.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  {item.icon}
                 </div>
-            </div>
-        </section>
+                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                  {item.description}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {item.skills.map((skill, si) => (
+                    <span key={si} className="text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-md bg-slate-900 border border-slate-800">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <!-- 2. About Section -->
-        <section id="about" class="content-section bg-white py-16 sm:py-24">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+      {/* Projects Section */}
+      <section id="projects" className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Featured Works</h2>
+              <p className="text-slate-400">Integrated systems and software solutions.</p>
+            </div>
+            
+            <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
+              {['all', 'software', 'electronics', 'mechanical', 'game'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                    activeTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {filteredProjects.map((project, i) => (
+              <div key={i} className="group relative bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all">
+                <div className="aspect-video bg-slate-950 flex items-center justify-center p-12 overflow-hidden relative">
+                   {/* Abstract project representation */}
+                   <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 to-transparent"></div>
+                   <div className="z-10 w-full h-full border-2 border-dashed border-slate-800 rounded-xl flex items-center justify-center">
+                      <Layers className="w-12 h-12 text-slate-700 group-hover:text-blue-500 transition-colors" />
+                   </div>
+                </div>
+                <div className="p-8">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <span className="text-blue-400 text-xs font-bold uppercase tracking-widest">{project.tech}</span>
+                      <h3 className="text-2xl font-bold mt-1 group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                    </div>
+                    <a href={project.link} className="p-2 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors">
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                  <p className="text-slate-400 leading-relaxed mb-0">
+                    {project.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats/Tech Stack Bar */}
+      <section className="py-20 px-6 border-y border-slate-900 bg-slate-950/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+            <div>
+              <div className="text-4xl font-black text-white mb-2">50+</div>
+              <div className="text-slate-500 text-xs uppercase font-bold tracking-widest">Projects Completed</div>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-2">12+</div>
+              <div className="text-slate-500 text-xs uppercase font-bold tracking-widest">Tech Stacks</div>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-2">100%</div>
+              <div className="text-slate-500 text-xs uppercase font-bold tracking-widest">Technical Accuracy</div>
+            </div>
+            <div>
+              <div className="text-4xl font-black text-white mb-2">4+</div>
+              <div className="text-slate-500 text-xs uppercase font-bold tracking-widest">Disciplines Mastery</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-32 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-5xl font-bold mb-8">Ready to build the future?</h2>
+          <p className="text-xl text-slate-400 mb-12">
+            Whether you need a high-end app, a custom automation system, or technical 
+            consultancy for your next big hardware project, I'm here to help.
+          </p>
+          <div className="flex flex-col md:flex-row gap-6 justify-center">
+            <a href="mailto:contact@avirup.com" className="flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-bold transition-all text-lg">
+              <Mail className="w-5 h-5" /> Start a Conversation
+            </a>
+            <a href="#" className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-2xl font-bold transition-all text-lg border border-slate-800">
+              Download CV
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 border-t border-slate-900">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2 font-bold tracking-tighter">
+            <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-xs">A</div>
+            AVIRUP CHAKRABORTY
+          </div>
+          <p className="text-slate-500 text-sm">
+            © {new Date().getFullYear()} — Engineered with precision.
+          </p>
+          <div className="flex gap-6">
+            <a href="#" className="text-slate-500 hover:text-white transition-colors"><Github className="w-5 h-5" /></a>
+            <a href="#" className="text-slate-500 hover:text-white transition-colors"><Linkedin className="w-5 h-5" /></a>
+            <a href="#" className="text-slate-500 hover:text-white transition-colors"><Terminal className="w-5 h-5" /></a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+
                 <div class="flex flex-col lg:flex-row lg:space-x-12">
                     <!-- Image Column -->
                     <div class="lg:w-1/2 mb-10 lg:mb-0">
@@ -420,4 +577,5 @@
 
 </body>
 </html>
+
 
