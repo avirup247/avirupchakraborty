@@ -1,1 +1,259 @@
-hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose Day | For Lata</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff1f2;
+            overflow: hidden;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Envelope Styles */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.5s;
+        }
+
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #f43f5e;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .envelope:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid #fb7185;
+            transform-origin: top;
+            transition: all 0.5s 0.3s;
+            z-index: 2;
+        }
+
+        .envelope:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 150px solid #f43f5e;
+            border-right: 150px solid #f43f5e;
+            border-top: 100px solid transparent;
+            border-bottom: 100px solid #e11d48;
+            z-index: 3;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .letter {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 280px;
+            height: 180px;
+            background: white;
+            z-index: 1;
+            transition: all 0.5s;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .open .envelope:before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .open .letter {
+            transform: translateY(-120px);
+            z-index: 2;
+        }
+
+        /* Main Content Display */
+        #main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: #fff1f2;
+        }
+
+        .photo-frame {
+            position: relative;
+            border: 8px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: rotate(var(--rotation));
+            transition: transform 0.3s;
+        }
+
+        .photo-frame:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 10;
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STAGE 1: THE ENVELOPE -->
+    <div id="envelope-container" class="flex flex-col items-center">
+        <div class="envelope-wrapper" id="envelope-click">
+            <div class="envelope">
+                <div class="letter shadow-inner">
+                    <p class="text-rose-600 font-bold">To: Lata ❤️</p>
+                    <p class="text-xs text-gray-400 mt-2">Click to open your Rose Day surprise</p>
+                </div>
+            </div>
+        </div>
+        <p class="mt-32 cursive text-rose-500 text-2xl animate-pulse">A special message is waiting...</p>
+    </div>
+
+    <!-- STAGE 2: THE ACTUAL WISH PAGE -->
+    <div id="main-content" class="flex flex-col items-center py-10 px-4">
+        <div class="max-w-4xl w-full text-center">
+            
+            <div class="mb-6">
+                <span class="text-6xl animate-bounce inline-block">🌹</span>
+            </div>
+
+            <h2 class="text-2xl md:text-3xl font-medium text-gray-700">Happy Rose Day,</h2>
+            <h1 class="text-6xl md:text-8xl cursive text-rose-600 my-2">Lata</h1>
+            
+            <div class="inline-block px-6 py-2 bg-rose-600 text-white rounded-full text-lg font-bold tracking-widest shadow-lg mb-8 uppercase">
+                Our Votka Sundori 🥂
+            </div>
+
+            <!-- Photo Gallery Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12 mt-10">
+                <!-- PHOTO 1 -->
+                <div class="photo-frame aspect-[3/4] bg-gray-200" style="--rotation: -3deg">
+                    <img src="img1.jpg" 
+                         alt="Lata 1" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                         onerror="this.src='https://via.placeholder.com/400x600?text=Lata+Photo+1'">
+                </div>
+                <!-- PHOTO 2 -->
+                <div class="photo-frame aspect-[3/4] bg-gray-200 sm:mt-8" style="--rotation: 2deg">
+                    <img src="img2.jpg" 
+                         alt="Lata 2" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                         onerror="this.src='htitps://via.placeholder.com/400x600?text=Lata+Photo+2'">
+                </div>
+                <!-- PHOTO 3 -->
+                <div class="photo-frame aspect-[3/4] bg-gray-200" style="--rotation: -1deg">
+                    <img src="img3.jpg" 
+                         alt="Lata 3" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                         onerror="this.src='https://via.placeholder.com/400x600?text=Lata+Photo+3'">
+                </div>
+            </div>
+
+            <!-- Message Card -->
+            <div class="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border-b-8 border-rose-500 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">✨</div>
+                
+                <p class="text-xl md:text-2xl text-gray-700 leading-relaxed italic mb-8">
+                    "Roses are red, violets are blue, there's no one as charmingly mischief-maker as you. 
+                    To the girl who can be as sweet as a petal and as spirited as her nickname—Lata, you make every day brighter."
+                </p>
+
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-1 bg-rose-200 mb-4"></div>
+                    <p class="text-gray-500 font-medium">With all my love,</p>
+                    <p class="text-3xl cursive text-rose-600 mt-2">Avirup</p>
+                </div>
+            </div>
+
+            <footer class="mt-16 pb-10 text-rose-400 text-sm font-bold tracking-widest uppercase">
+                February 7th • Rose Day Special
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope-click');
+        const envelopeContainer = document.getElementById('envelope-container');
+        const mainContent = document.getElementById('main-content');
+
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('open');
+            
+            // Wait for envelope animation to finish, then switch view
+            setTimeout(() => {
+                envelopeContainer.style.opacity = '0';
+                envelopeContainer.style.transform = 'scale(1.2)';
+                envelopeContainer.style.transition = 'all 0.8s ease';
+                
+                setTimeout(() => {
+                    envelopeContainer.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    mainContent.style.display = 'flex';
+                    setTimeout(() => {
+                        mainContent.style.opacity = '1';
+                        startHeartRain();
+                    }, 100);
+                }, 800);
+            }, 1200);
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            const items = ['🌹', '🍷', '✨', '💖', '🌸', '🥂'];
+            heart.innerHTML = items[Math.floor(Math.random() * items.length)];
+            heart.className = 'floating-heart';
+            
+            const startX = Math.random() * 100;
+            const duration = Math.random() * 3 + 3;
+            const size = Math.random() * 20 + 20;
+
+            heart.style.left = startX + 'vw';
+            heart.style.fontSize = size + 'px';
+            heart.style.animationDuration = duration + 's';
+            
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        function startHeartRain() {
+            setInterval(createHeart, 400);
+        }
+    </script>
+</body>
+</html>
